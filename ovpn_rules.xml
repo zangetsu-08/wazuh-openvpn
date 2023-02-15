@@ -1,0 +1,31 @@
+<group name="openvpn,log">
+ <rule id="100032" level="5">
+    <decoded_as>openvpnas</decoded_as>
+    <match>Peer Connection Initiated</match>
+    <description>user $(init-srcuser) is trying to initiate a connection to the server</description>
+  </rule>
+  </group>
+
+<group name="openvpn,log">
+ <rule id="100033" level="5">
+    <decoded_as>openvpnas</decoded_as>
+    <match>'AUTH_FAILED' (status=1)"</match>
+    <description>user $(fail-user) authentication failed</description>
+  </rule>
+ </group>
+
+<group name="openvpn,log">
+ <rule id="100034" level="5">
+    <decoded_as>openvpnas</decoded_as>
+    <match>MULTI: Learn:</match>
+    <description>user $(login-user) is connected from $(login-srcip) and virtualip $(vpnip)</description>
+  </rule>
+ </group>
+
+<group name="openvpn,log">
+ <rule id="100035" level="9">
+    <decoded_as>openvpnas-license</decoded_as>
+    <regex>^\d\d\d\d-\d\d-\d\dT\d\d:\d\d+\.*\s[stdout#info]\sVPN Auth Failed:\s'LICENSE:</regex>
+    <description>Access Server license failure: maximum concurrent_connections exceeded</description>
+  </rule>
+ </group>

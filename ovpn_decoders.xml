@@ -1,0 +1,39 @@
+<decoder name="openvpnas">
+	<prematch>^\d\d\d\d-\d\d-\d\dT\d\d:\d\d+\.*\s[stdout#info]\s[OVPN\s\d]\sOUT:\s\p\d\d\d\d-\d\d-\d\d\s\d\d:\d\d:\d\d</prematch>
+</decoder>
+
+<!-- 2023-02-09T15:27:07+0000 [stdout#info] [OVPN 0] OUT: '2023-02-09 15:27:07 222.222.222.151:53912 [etovar] Peer Connection Initiated with [AF_INET]222.222.222.151:53912 (via [AF_INET]172.31.64.186%eth0)' -->	
+
+<decoder name="openvpnas-child">
+    <parent>openvpnas</parent>
+     <regex offset="after_parent">^(\.+):(\.+)\s(\.+)\sPeer Connection Initiated with</regex>
+    <order>init-srcip,init-srcport,init-srcuser</order>
+ </decoder>
+
+<!-- 2023-02-09T15:27:20+0000 [stdout#info] [OVPN 0] OUT: "2023-02-09 15:27:20 222.222.222.151:52702 SENT CONTROL [etovar]: 'AUTH_FAILED' (status=1)" -->
+
+<decoder name="openvpnas-child">
+    <parent>openvpnas</parent>
+    <regex offset="after_parent">^(\.+):(\.+)\sSENT CONTROL\s(\.+): \pAUTH_FAILED\p\s(\.+)</regex>
+    <order>fail-srcip,fail-srcport,fail-user,fail-status</order>
+ </decoder>
+
+<!-- 2023-02-09T15:28:08+0000 [stdout#info] [OVPN 0] OUT: '2023-02-09 15:28:08 etovar/222.222.222.151:55830 MULTI: Learn: 192.168.46.82 -> etovar/201.221.236.151:55830' -->
+
+<decoder name="openvpnas-child">
+    <parent>openvpnas</parent>
+    <regex offset="after_parent">^(\.+)/(\.+):(\.+)\sMULTI:\sLearn:\s(\.+)\s-></regex>
+    <order>login-user,login-srcip,login-srcport,vpnip</order>
+ </decoder>
+
+<!-- 2023-02-10T20:19:24+0000 [stdout#info] VPN Auth Failed: 'LICENSE: Access Server license failure: maximum concurrent_connections exceeded (25)' ['LICENSE: Access Server license failure: maximum concurrent_connections exceeded (25)'] -->
+
+<decoder name="openvpnas-license">
+        <prematch>^\d\d\d\d-\d\d-\d\dT\d\d:\d\d+\.*\s[stdout#info]\sVPN Auth Failed:\s'LICENSE:</prematch>
+</decoder>
+
+<decoder name="openvpnaslicense-child">
+    <parent>openvpnas-license</parent>
+    <regex offset="after_parent">^(\.+)</regex>
+    <order>license-msg</order>
+ </decoder>
